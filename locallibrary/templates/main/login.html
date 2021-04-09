@@ -1,0 +1,21 @@
+{% extends 'main/header.html' %}
+
+{% block content %}
+    <div class="card-panel">
+        <form method="POST">
+            {% csrf_token %}
+            <!-- {{form.as_p}} -->
+<!--             <p><label for="station">Station:</label>
+                <input name="station" id="station" value= "{{name}}" readonly required></input></p>
+            <p><label for="model">Model:</label>
+                <input name="model" id="model" value= "EN2251" readonly required></input></p> -->
+            <span class="login100-form-title p-b-37">Sign In</span>
+            <p><label for="username">Username:</label>
+                <input name="username" id="username" required></input></p>
+            <p><label for="password">Password:</label>
+                <input name="password" id="password" type="password" required></input></p>
+        <button class="btn btn-outline-info" type="submit">Login</button>
+        </form>
+<!--     Don't have an account? <a href="/register" target="blank"><strong>register here</strong></a>!
+    </div> -->
+{% endblock %}
