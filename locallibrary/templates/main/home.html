@@ -2,49 +2,101 @@
 {% load static %}
 
 {% block content %}
-  <div class="row">
-  	{% for l in lines %}
-      <div class="col s12 m6">
-        <div class="card blue-grey darken-1 hoverable">
-          <div class="card-content white-text">
-            <span class="card-title"></span>
-            <p style="font-size:70%">{{name}}
-            <div class="z-depth-5 hoverable center" style="background-color:#FF8040" >{{l.line_category}}</div>
-	              {% for r in regions %}
-		              {% if r.station_ForeignKey == l %}
-	              	  {{r}}
-	              	  <li>
-	              	  {% for s in stations %}
-	              	  	{% if s.station_ForeignKey == r %}
-	              	  		<div class="btn-floating tabs">
-	              	  			<!-- <img src="{% static 'main/image/html5.gif' %}" alt="My image"> -->
-	              	  			{% if s.station_Status == False %}
-	              	  			<form aciton="" method="get">
-	              	  				<input name = {{s}} style="color:#000" type="submit" value={{s}}>{{s}}</input>
-	              	  				<!-- <img src="{% static 'main/image/pc.jpg' %}" alt="My image"> -->
-	              	  			</form>
-	              	  			{% else %}
-              	  					<form aciton="" method="get">
-              	  						<!-- <img src="{% static 'main/image/pc.jpg' %}" alt="My image"> -->
-	              	  					<a name = {{s}} href="http://192.168.0.43:3000/Nick/Test1/archive/master.zip" style="color:#000" value={{s}}>{{s}}</a>
-              	  					</form>
-	              	  			{% endif %}
-	              	  			<!-- {% if s.station_Status == False %}
-	              	  					<a name = {{s}} href="/login/" style="color:#000" value={{s}}>{{s}}</a>
-	              	  			{% else %}
-	              	  					<p name = {{s}} style="color:#999" value={{s}}>{{s}}</p>
-	              	  			{% endif %} -->
-	              	  		</div>
-	              	  	{% endif %}
-	              	  {% endfor %}
-	              	  </li>
-		              {% endif %}
-	              {% endfor %}
-            </p>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-{% endblock %}
+<div class="row">
+<div class="col s12 m6" url-endpoint='{% url "api-data" %}'>
+	<div class="card bg-light mb-3 wd600" style="max-width: 60rem;">
+	  <div class="card-header">Upload</div>
+	  <div class="card-body">
+	  	<canvas id="myChart"></canvas>
+	    <h5 class="card-title">Light card title</h5>
+	    <p class="card-text">
+	      Some quick example text to build on the card title and make up the bulk of the
+	      card's content.
+	    </p>
+	  </div>
+	</div>
+</div>
+<div class="col s12 m6">
+	<div class="card text-white bg-dark mb-3 wd600" style="max-width: 60rem;">
+	  <div class="card-header">Download</div>
+	  <div class="card-body">
+	    <h5 class="card-title">Dark card title</h5>
+	    <p class="card-text">
+	      Some quick example text to build on the card title and make up the bulk of the
+	      card's content.
+	    </p>
+	  </div>
+	</div>
+</div>
+</div>
+
+<script>
+$(document).ready( function() {
+  	var ctx = document.getElementById('myChart');
+  	var d = []
+	var endpoint = '/api/chart/data';
+	var myChart = new Chart(ctx,{
+			labels: [],
+		    type: 'bar',
+		    options: {
+		        scales: {
+		            y: {
+		                beginAtZero: true
+		            }
+		        }
+		    }
+		});
+	setInterval(function () {
+	    $.ajax({
+	        url: endpoint,
+	        success: function (data) {
+	        	if (JSON.stringify(d) !== JSON.stringify(Object.values(data))) {
+					updateData(myChart,data)
+					d = Object.values(data)
+	        	}
+	        },
+	        error: function (err) {
+	        	console.log('error');	
+	        }
+	    })
+	},1000)
+
+	function getRandomInt(max) {
+	  return Math.floor(Math.random() * max);
+	}
+
+	function updateData(chart, data) {
+		chart.data = {
+	        labels:  Object.keys(data),
+	        // labels: [],
+	        datasets: [{
+	            label: 'Votes',
+	            data: Object.values(data),
+	            backgroundColor: [
+	                'rgba(255, 99, 132, 0.2)',
+	                'rgba(54, 162, 235, 0.2)',
+	                'rgba(255, 206, 86, 0.2)',
+	                'rgba(75, 192, 192, 0.2)',
+	                'rgba(153, 102, 255, 0.2)',
+	                'rgba(255, 159, 64, 0.2)'
+	            ],
+	            borderColor: [
+	                'rgba(255, 99, 132, 1)',
+	                'rgba(54, 162, 235, 1)',
+	                'rgba(255, 206, 86, 1)',
+	                'rgba(75, 192, 192, 1)',
+	                'rgba(153, 102, 255, 1)',
+	                'rgba(255, 159, 64, 1)'
+	            ],
+	            borderWidth: 1
+	        }]
+	    };
+	    chart.update();
+	}
+})
+
+</script>
+
+
+{% endblock content %}
 

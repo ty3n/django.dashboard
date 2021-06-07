@@ -2,11 +2,13 @@
     {% load static %}
     <!-- Prism CSS -->
     <link href="{% static "tinymce/css/prism.css" %}" rel="stylesheet">
-    <!-- Compiled and minified CSS -->
-    <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"-->
     <link rel="stylesheet" href="{% static "main/css/materialize.css" %}">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Latest compiled and minified JavaScript -->
 </head>
 
 <body>
@@ -18,11 +20,9 @@
       </ul>
     </div>
   </nav>
-  <div class="container" style="max-width: 600px; min-height: 100%">
     {% include 'main/includes/messaging.html' %}
     {% block content %}
     {% endblock %}
-  </div>
   <!-- <footer class="page-footer">
     <div class="container">
       <div class="row">
