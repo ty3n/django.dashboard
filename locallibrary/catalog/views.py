@@ -4,13 +4,30 @@ from django.contrib.auth import logout, authenticate, login, models
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import Line, Region, Station
-from .forms import ContactForm
+from .forms import ContactForm, FileUploadForm, UploadForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
 import giteapy
+
+class FileUploadView(APIView):
+    parser_classes = [FileUploadParser, ]
+    def put(self, request, filename, format=None):
+        file_obj = request.data['file']
+        with open(filename, 'wb') as f:
+            for chunk in file_obj.chunks():
+                f.write(chunk)
+        return Response(f'{filename} uploaded',status=204)
+    def post(self,request,filename,format=None):
+        form = UploadForm(request.POST or None, request.FILES or None)
+        context = {'form':form}
+        return render(request, '', context)
+    def get(self,request,filename,format=None):
+        print(request)
+        return HttpResponseRedirect('/')
 
 class Gitea:
     def __init__(self,host,user,pwd):
@@ -56,13 +73,24 @@ def manage(request):
 class HomePage(View):
     def get(self,request,*args,**kwargs):
         if str(request.user)!='AnonymousUser':
+            uform = UploadForm(request.POST or None, request.FILES or None)
+            if request.is_ajax():
+                if form.is_valid():
+                    form.save()
+                    return JsonResponse({'message':'hell yeah'})
             return render(request = request,
-              template_name='main/home.html')
+              template_name='main/home.html',
+              context={"form":uform})
         form = AuthenticationForm()
         return render(request = request,
               template_name = "main/login.html",
               context={"form":form})
     def post(self,request,*args,**kwargs):
+        uform = UploadForm(request.POST or None, request.FILES or None)
+        if request.is_ajax():
+            if uform.is_valid():
+                uform.save()
+                return JsonResponse({'message':'hell yeah'})
         if str(request.user)!='AnonymousUser':
             return render(request = request,
               template_name='main/home.html',
@@ -82,13 +110,12 @@ class HomePage(View):
                 # return redirect('/')
                 return render(request = request,
                       template_name='main/home.html',
-                      context = {"lines":Line.objects.all, "regions":Region.objects.all, "stations":Station.objects.all})
+                      context = {"lines":Line.objects.all, "regions":Region.objects.all, "stations":Station.objects.all,"form":uform})
             else:
                 messages.error(request, "Invalid username or password")
                 return render(request = request,
                   template_name = "main/login.html",
                   context={"form":form})
-
 
 def login_request(request):
     if request.method == "POST":
@@ -148,19 +175,18 @@ class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
     def get(self , request, format=None):
-        g = Gitea('http://172.25.70.190:3000/api/v1','nick','3480')
+        g = Gitea('http://172.18.130.11:3000/api/v1','hitron','hitron')
         d = g.repoapi.repo_search()
-        s = sorted([s.created_at.date().__str__() for s in d.data])
+        s = sorted([s.updated_at.date().__str__() for s in d.data])
+        q = sorted([s.created_at.date().__str__() for s in d.data])
         data = {}
         for i in s:
             if i in data.keys():
-                    data[i] += 1
+                data[i] += 1
             else:
-                    data.update({i:1})
-        print(data)
+                data.update({i:1})
         # data = {
-        # "sales": 220,
-        # "customers":10,
+        #     'a':[1,2,3,4],
+        #     'b':[5,6,7,8]
         # }
         return Response(data)
-
