@@ -14,6 +14,6 @@ class ContactForm(forms.Form):
     # cc_myself = forms.BooleanField(required=False)
 
 class UploadForm(forms.ModelForm):
-	class Meta:
-		model = Upload
-		fields = ('image',)
+    class Meta:
+        model = Upload
+        fields = ('image',)

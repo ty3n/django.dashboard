@@ -75,8 +75,8 @@ class HomePage(View):
         if str(request.user)!='AnonymousUser':
             uform = UploadForm(request.POST or None, request.FILES or None)
             if request.is_ajax():
-                if form.is_valid():
-                    form.save()
+                if uform.is_valid():
+                    uform.save()
                     return JsonResponse({'message':'hell yeah'})
             return render(request = request,
               template_name='main/home.html',
@@ -88,7 +88,9 @@ class HomePage(View):
     def post(self,request,*args,**kwargs):
         uform = UploadForm(request.POST or None, request.FILES or None)
         if request.is_ajax():
+            print(uform.is_valid())
             if uform.is_valid():
+                print(uform)
                 uform.save()
                 return JsonResponse({'message':'hell yeah'})
         if str(request.user)!='AnonymousUser':
@@ -175,7 +177,7 @@ class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
     def get(self , request, format=None):
-        g = Gitea('http://172.18.130.11:3000/api/v1','hitron','hitron')
+        g = Gitea('http://172.25.70.190:3000/api/v1','hitron','hitron')
         d = g.repoapi.repo_search()
         s = sorted([s.updated_at.date().__str__() for s in d.data])
         q = sorted([s.created_at.date().__str__() for s in d.data])

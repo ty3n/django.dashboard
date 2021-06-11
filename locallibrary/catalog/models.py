@@ -5,10 +5,8 @@ from django.contrib.auth.models import User
 
 class Upload(models.Model):
     image = models.ImageField(upload_to='images')
-    class Meta:
-        verbose_name_plural = "Upload"
     def __str__(self):
-        return str(self.image)
+        return str(self.pk)
 
 class Line(models.Model):
     line_category = models.CharField(max_length=200)
