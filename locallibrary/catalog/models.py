@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 
 class Upload(models.Model):
-    image = models.ImageField(upload_to='images')
+    image = models.FileField(upload_to='images')
     def __str__(self):
         return str(self.pk)
 

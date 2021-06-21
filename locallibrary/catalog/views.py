@@ -12,6 +12,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
 import giteapy
+from django.views.decorators.csrf import csrf_exempt
+from .mssql import *
 
 class FileUploadView(APIView):
     parser_classes = [FileUploadParser, ]
@@ -69,6 +71,7 @@ def client_ip(request):
 @login_required(login_url='/')
 def manage(request):
     return render(request = request, template_name='main/manager.html')
+
 
 class HomePage(View):
     def get(self,request,*args,**kwargs):
@@ -177,18 +180,21 @@ class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
     def get(self , request, format=None):
-        g = Gitea('http://172.25.70.190:3000/api/v1','hitron','hitron')
-        d = g.repoapi.repo_search()
-        s = sorted([s.updated_at.date().__str__() for s in d.data])
-        q = sorted([s.created_at.date().__str__() for s in d.data])
-        data = {}
-        for i in s:
-            if i in data.keys():
-                data[i] += 1
-            else:
-                data.update({i:1})
+        # g = Gitea('http://172.25.70.190:3000/api/v1','hitron','hitron')
+        # d = g.repoapi.repo_search()
+        # s = sorted([s.updated_at.date().__str__() for s in d.data])
+        # q = sorted([s.created_at.date().__str__() for s in d.data])
+        # data = {}
+        # for i in s:
+        #     if i in data.keys():
+        #         data[i] += 1
+        #     else:
+        #         data.update({i:1})
         # data = {
         #     'a':[1,2,3,4],
         #     'b':[5,6,7,8]
         # }
-        return Response(data)
+        d = DBQuery()
+        data = d.getdata().to_json(orient="index")
+        context={'data':data,'tableheader':['PN','ModelName','Status','Counts']}
+        return Response(context)

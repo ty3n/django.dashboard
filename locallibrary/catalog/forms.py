@@ -14,6 +14,11 @@ class ContactForm(forms.Form):
     # cc_myself = forms.BooleanField(required=False)
 
 class UploadForm(forms.ModelForm):
+    image = forms.FileField(label='')
     class Meta:
         model = Upload
         fields = ('image',)
+
+    def __init__(self, *args, **kwargs):
+        super(UploadForm, self).__init__(*args, **kwargs)
+        self.fields['image'].widget.attrs.update({'class': 'file-upload-field','label':''})
