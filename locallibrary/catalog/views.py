@@ -14,6 +14,7 @@ from rest_framework.parsers import FileUploadParser
 import giteapy
 from django.views.decorators.csrf import csrf_exempt
 from .mssql import *
+from datetime import datetime
 
 class FileUploadView(APIView):
     parser_classes = [FileUploadParser, ]
@@ -176,10 +177,29 @@ def get_data(request, *args, **kwargs):
     }
     return JsonResponse(data)
 
+
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
+    def __init__(self):
+        self.d = DBQuery()
     def get(self , request, format=None):
+        print(request.data)
+        q = time.time()
+        s = self.d.getdata(datetime.today()-timedelta(days=6))
+        data = s.to_json(orient="index")
+        # a[(a['Status']=='FAIL')].head(10)
+        cla = s[(s['Status']=='FAIL')].head(10)['ModelName'].to_list()
+        cfl = s[(s['Status']=='FAIL')].head(10)['Counts'].to_list()
+        cpl = []
+        for i in s[(s['Status']=='FAIL')].head(10).iterrows():
+            cpl.append(s[(s['Status']=='PASS')&(s['PN']==i[1]['PN'])&(s['ModelName']==i[1]['ModelName'])]['Counts'].sum())
+        context={'data':data,'tableheader':s.columns.to_list(),'chartlabel':cla,'chartpass':cpl,'chartfail':cfl}
+        print(time.time()-q)
+        return Response(context)
+    # def post(self,request,format=None):
+    #     print(request.data)
+    #     q = time.time()
         # g = Gitea('http://172.25.70.190:3000/api/v1','hitron','hitron')
         # d = g.repoapi.repo_search()
         # s = sorted([s.updated_at.date().__str__() for s in d.data])
@@ -194,7 +214,12 @@ class ChartData(APIView):
         #     'a':[1,2,3,4],
         #     'b':[5,6,7,8]
         # }
-        d = DBQuery()
-        data = d.getdata().to_json(orient="index")
-        context={'data':data,'tableheader':['PN','ModelName','Status','Counts']}
-        return Response(context)
+        # s = self.d.getdata(datetime.today())
+        # data = s.to_json(orient="index")
+        # context={'data':data,'tableheader':['PN','ModelName','Status','Counts']}
+        # print(time.time()-q)
+        # return Response(context)
+        #a[a['PN'] == '1610100002V0']
+
+# for i in s[(s['Status']=='FAIL')].head(10).iterrows():
+#     print(s[(s['Status']=='PASS')&(s['PN']==i[1]['PN'])&(s['ModelName']==i[1]['ModelName'])&(s['Station']==i[1]['Station'])]['Counts'].sum())

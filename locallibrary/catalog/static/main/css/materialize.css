@@ -2279,7 +2279,9 @@ table {
   width: 100%;
   display: table;
   border-collapse: collapse;
-  border-spacing: 0; }
+  border-spacing: 0; 
+
+}
   table.striped tr {
     border-bottom: none; }
   table.striped > tbody > tr:nth-child(odd) {
@@ -2597,7 +2599,7 @@ table span.badge {
 
 .wd600 {
   max-width: 600px; 
-  min-height: 100%;
+  min-height: 35%;
 }
 
 @media only screen and (min-width: 601px) {
@@ -3515,9 +3517,10 @@ small {
     border-radius: .25rem;}
   .card .card-title {
     font-size: 24px;
-    font-weight: 300; }
+    /*font-weight: 300; */
+  }
   .card .card-header {
-    font-size: 24px;
+    /*font-size: 24px;*/
     padding: .75rem 1.25rem;
     margin-bottom: 0;
     background-color: rgba(0,0,0,.03);
@@ -6624,4 +6627,9 @@ input[type=range]::-ms-thumb {
   padding: 0px 10px 2px 10px;
   overflow: hidden;
   /*position: relative;*/
+}
+
+.scrollit {
+    overflow:scroll;
+    height:500px;
 }
