@@ -59,9 +59,9 @@ $(document).ready( function() {
         if (!(opaque)) {        
             var v = ctx.parsed.y;
             var c = v > 5000 ? '#D60000'
-              : v > 500 ? '#F46300'
-              : v > 50 ? '#0358B6'
-              : '#44DE28';
+              : v > 2000 ? '#ff4800'
+              : v > 1000 ? '#ff8000'
+              : '#ffae00';
             return c
         } else {
             var c = v < 5000 ? '#D60000'
