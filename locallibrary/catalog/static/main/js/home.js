@@ -37,7 +37,7 @@ $(document).ready( function() {
                 console.log('error');   
             }
         })
-    },1000)
+    },5000)
 
     function getRandomInt(max) {
       return Math.floor(Math.random() * max);

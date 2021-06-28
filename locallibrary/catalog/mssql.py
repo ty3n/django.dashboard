@@ -48,6 +48,6 @@ ORDER by Status".format(t,p.__str__()))
 FROM [test].[dbo].[TESTlog_VN] \
 where testtime between '{0}' and '{1}'\
 group by PN,ModelName,status,station,StationPort \
-ORDER by Status".format(t,p.__str__()))
+ORDER by PN".format(t,p.__str__()))
         data = pd.read_sql(query, self.db)
         return data.sort_values(by=['Status','Counts'], ascending=False)        

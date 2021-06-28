@@ -73,7 +73,6 @@ def client_ip(request):
 def manage(request):
     return render(request = request, template_name='main/manager.html')
 
-
 class HomePage(View):
     def get(self,request,*args,**kwargs):
         if str(request.user)!='AnonymousUser':
@@ -177,7 +176,6 @@ def get_data(request, *args, **kwargs):
     }
     return JsonResponse(data)
 
-
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
@@ -187,13 +185,15 @@ class ChartData(APIView):
         print(request.data)
         q = time.time()
         s = self.d.getdata(datetime.today()-timedelta(days=6))
+        b = self.d.get(datetime.today()-timedelta(days=6))
         data = s.to_json(orient="index")
         # a[(a['Status']=='FAIL')].head(10)
         cla = s[(s['Status']=='FAIL')].head(10)['ModelName'].to_list()
-        cfl = s[(s['Status']=='FAIL')].head(10)['Counts'].to_list()
+        cfl = []
         cpl = []
         for i in s[(s['Status']=='FAIL')].head(10).iterrows():
             cpl.append(s[(s['Status']=='PASS')&(s['PN']==i[1]['PN'])&(s['ModelName']==i[1]['ModelName'])]['Counts'].sum())
+            cfl.append(s[(s['Status']=='FAIL')&(s['PN']==i[1]['PN'])&(s['ModelName']==i[1]['ModelName'])]['Counts'].sum())
         context={'data':data,'tableheader':s.columns.to_list(),'chartlabel':cla,'chartpass':cpl,'chartfail':cfl}
         print(time.time()-q)
         return Response(context)
@@ -222,4 +222,10 @@ class ChartData(APIView):
         #a[a['PN'] == '1610100002V0']
 
 # for i in s[(s['Status']=='FAIL')].head(10).iterrows():
-#     print(s[(s['Status']=='PASS')&(s['PN']==i[1]['PN'])&(s['ModelName']==i[1]['ModelName'])&(s['Station']==i[1]['Station'])]['Counts'].sum())
+#     print(s[(s['Status']=='PASS')&(s['PN']==i[1]['PN'])&(s['ModelName']==i[1]['ModelName'])]['Counts'])
+
+# for i in sorted(list(set(s[(s['Status']=='FAIL')].PN))):
+#     for j in sorted(list(set(s[(s['Status']=='FAIL')&(s['PN']==i)].Station))):
+#         p = s[(s['Status']=='PASS')&(s['PN']==i)&(s['Station']==j)].Counts.sum()
+#         f = s[(s['Status']=='FAIL')&(s['PN']==i)&(s['Station']==j)].Counts.sum()
+#         print('pn:{},station:{},pass:{},fail:{},retest rate:{:.2%}'.format(i,j,p,f,f/p))
